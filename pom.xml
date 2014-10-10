@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>vlfig</groupId>
-    <artifactId>test-gocd-validation</artifactId>
-    <version>0.1</version>
+    <artifactId>gocd-validator</artifactId>
+    <version>0.2-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,6 +23,22 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1.1</version>
+<!--
+            <exclusions>
+                <exclusion>
+                    <groupId>xom</groupId>
+                    <artifactId>xom</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jdom</groupId>
+                    <artifactId>jdom</artifactId>
+                </exclusion>
+            </exclusions>
+-->
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -34,6 +50,11 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -44,6 +65,72 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>vlfig.gocd.validation.ConfigValidator</mainClass>
+                        </transformer>
+                    </transformers>
+                    <minimizeJar>true</minimizeJar>
+                    <filters>
+                        <filter>
+                            <artifact>jaxen:jaxen</artifact>
+                            <includes>
+                                <include>org/jaxen/**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>xerces:xercesImpl</artifact>
+                            <includes>
+                                <include>org/apache/xerces/**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>jdom:jdom</artifact>
+                            <includes>
+                                <!--JaxenXPath-->
+                                <include>org/jdom/xpath/**</include>
+                                <include>org/jdom/input/**</include>
+                                <include>org/jdom/filter/**</include>
+                                <include>org/jdom/output/**</include>
+                                <include>org/jdom/*</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>log4j:log4j</artifact>
+                            <includes>
+                                <include>org/apache/log4j/**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>commons-logging:commons-logging</artifact>
+                            <includes>
+                                <include>org/apache/commons/logging/**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
             </plugin>
         </plugins>
