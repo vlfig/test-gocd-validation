@@ -44,7 +44,7 @@ public class ConfigValidator {
         MagicalGoConfigXmlLoader loader =
                 new MagicalGoConfigXmlLoader(new ConfigCache(), registryWithNoPlugins, metricsProbeService);
         String configStr = new String(readAllBytes(get(readFrom)));
-        CruiseConfig config = loader.loadConfigHolder(configStr).config;
+        CruiseConfig config = loader.loadConfigHolder(configStr).configForEdit;
 
         MagicalGoConfigXmlWriter writer =
                 new MagicalGoConfigXmlWriter(new ConfigCache(), registryWithNoPlugins, metricsProbeService);
